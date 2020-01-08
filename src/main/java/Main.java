@@ -53,8 +53,8 @@ public class Main {
                 .withReleaseLabel("emr-5.3.1")
                 .withSteps(step1)
                 .withLogUri("s3://hadoopassignment2/logs/")
-                .withServiceRole("EMR_DefaultRole")
-                .withJobFlowRole("EMR_EC2_DefaultRole")
+                .withServiceRole("NE2")
+                .withJobFlowRole("NE")
                 .withInstances(new JobFlowInstancesConfig()
                         .withEc2KeyName("Admin")
                         .withInstanceCount(20) // CLUSTER SIZE
