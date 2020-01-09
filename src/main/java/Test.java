@@ -1,6 +1,5 @@
+
 import java.io.IOException;
-
-
 
 import java.util.StringTokenizer;
 
@@ -14,20 +13,22 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class Test {
-
     public static class MapperClass extends Mapper<LongWritable, Text, Text, IntWritable> {
         private final static IntWritable one = new IntWritable(1);
-        private Text word = new Text();
-
+        private Text _key = new Text();
         @Override
         public void map(LongWritable key, Text value, Context context) throws IOException,  InterruptedException {
-            StringTokenizer itr = new StringTokenizer(value.toString());
+            StringTokenizer itr = new StringTokenizer(value.toString(), "\n");
+
             while (itr.hasMoreTokens()) {
-                word.set(itr.nextToken());
-                context.write(word, one);
+                String[] parts = itr.nextToken().split("\t");
+                _key.set(parts[0]);
+
+                context.write(_key, one);
             }
         }
     }
@@ -43,18 +44,20 @@ public class Test {
         }
     }
 
+    //step2
     public static class PartitionerClass extends Partitioner<Text, IntWritable> {
+        private Text _key = new Text();
         @Override
         public int getPartition(Text key, IntWritable value, int numPartitions) {
-            return key.hashCode() % numPartitions;
+            String[] parts = key.toString().split(" ");
+            _key.set(parts[0]);
+            return (_key.hashCode() & Integer.MAX_VALUE) % numPartitions;
         }
     }
-
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
-//        Job job = new Job(conf, "word count");
-        Job job = Job.getInstance(conf,"word count");
-        job.setJarByClass(Test.class);
+        Job job = Job.getInstance(conf, " Step 1");
+        job.setJarByClass(Step1.class);
         job.setMapperClass(MapperClass.class);
         job.setPartitionerClass(PartitionerClass.class);
         job.setCombinerClass(ReducerClass.class);
@@ -63,7 +66,9 @@ public class Test {
         job.setMapOutputValueClass(IntWritable.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
+
         FileInputFormat.addInputPath(job, new Path(args[0]));
+//        job.setInputFormatClass(SequenceFileInputFormat.class); //todo: change back when on  bigdata
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }

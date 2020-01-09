@@ -51,7 +51,7 @@ public class Step1 {
         public int getPartition(Text key, IntWritable value, int numPartitions) {
             String[] parts = key.toString().split(" ");
             _key.set(parts[0]);
-            return _key.hashCode() % numPartitions;
+            return (_key.hashCode() & Integer.MAX_VALUE) % numPartitions;
         }
     }
     public static void main(String[] args) throws Exception {
