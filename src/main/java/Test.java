@@ -18,7 +18,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class Test {
     public static class MapperClass extends Mapper<LongWritable, Text, Text, IntWritable> {
-        private final static IntWritable one = new IntWritable(1);
+        private IntWritable _val = new IntWritable(0);
         private Text _key = new Text();
         @Override
         public void map(LongWritable key, Text value, Context context) throws IOException,  InterruptedException {
@@ -27,8 +27,9 @@ public class Test {
             while (itr.hasMoreTokens()) {
                 String[] parts = itr.nextToken().split("\t");
                 _key.set(parts[0]);
+                _val.set(Integer.parseInt(parts[2]));
 
-                context.write(_key, one);
+                context.write(_key, _val);
             }
         }
     }
@@ -49,8 +50,8 @@ public class Test {
         private Text _key = new Text();
         @Override
         public int getPartition(Text key, IntWritable value, int numPartitions) {
-            String[] parts = key.toString().split(" ");
-            _key.set(parts[0]);
+//            String[] parts = key.toString().split(" ");
+            _key.set(key);
             return (_key.hashCode() & Integer.MAX_VALUE) % numPartitions;
         }
     }
@@ -67,9 +68,9 @@ public class Test {
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
 
-        FileInputFormat.addInputPath(job, new Path(args[0]));
+        FileInputFormat.addInputPath(job, new Path(args[1]));
 //        job.setInputFormatClass(SequenceFileInputFormat.class); //todo: change back when on  bigdata
-        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+        FileOutputFormat.setOutputPath(job, new Path(args[2]));
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
 }

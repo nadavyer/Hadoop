@@ -37,7 +37,7 @@ public class Main {
         String rand = UUID.randomUUID().toString();
 
 
-     //STEP 1
+        //STEP 1
         HadoopJarStepConfig step1cfg = new HadoopJarStepConfig()
                 .withJar("s3://hadoopassignment2/stepsJars/step1.jar")
                 .withMainClass("Step1")
@@ -49,11 +49,22 @@ public class Main {
                 .withActionOnFailure("TERMINATE_JOB_FLOW")
                 .withHadoopJarStep(step1cfg);
 
+        //STEP 2
+        HadoopJarStepConfig step2cfg = new HadoopJarStepConfig()
+                .withJar("s3://hadoopassignment2/stepsJars/step2.jar")
+                .withMainClass("Step2")
+                .withArgs("s3://hadoopassignment2/output/"+rand+"-1/")
+                .withArgs("s3://hadoopassignment2/output/"+rand+"-2/");
+
+        StepConfig step2 = new StepConfig()
+                .withName("Step 2")
+                .withActionOnFailure("TERMINATE_JOB_FLOW")
+                .withHadoopJarStep(step2cfg);
 
         RunJobFlowRequest request = new RunJobFlowRequest()
                 .withName("Distributed-Ass2")
                 .withReleaseLabel("emr-6.0.0-beta")
-                .withSteps(step1)
+                .withSteps(step1, step2)
                 .withLogUri("s3://hadoopassignment2/logs/")
                 .withServiceRole("NE2")
                 .withJobFlowRole("NE")
@@ -61,10 +72,8 @@ public class Main {
                         .withEc2KeyName("Admin")
                         .withInstanceCount(3) // CLUSTER SIZE
                         .withKeepJobFlowAliveWhenNoSteps(false)
-                        .withMasterInstanceType("m1.medium")
-                        .withSlaveInstanceType("m1.medium"));
-
-
+                        .withMasterInstanceType("m3.xlarge")
+                        .withSlaveInstanceType("m3.xlarge"));
 
         RunJobFlowResult result = emr.runJobFlow(request);
         System.out.println("JobFlow id: "+result.getJobFlowId());
