@@ -37,7 +37,7 @@ public class Main {
         String rand = UUID.randomUUID().toString();
 
 
-        //STEP 1
+        //STEP 1 - N3
         HadoopJarStepConfig step1cfg = new HadoopJarStepConfig()
                 .withJar("s3://hadoopassignment2/stepsJars/step1.jar")
                 .withMainClass("Step1")
@@ -49,11 +49,12 @@ public class Main {
                 .withActionOnFailure("TERMINATE_JOB_FLOW")
                 .withHadoopJarStep(step1cfg);
 
-        //STEP 2
+
+        //STEP 2 - N2
         HadoopJarStepConfig step2cfg = new HadoopJarStepConfig()
-                .withJar("s3://hadoopassignment2/stepsJars/step2.jar")
-                .withMainClass("Step2")
-                .withArgs("s3://hadoopassignment2/output/"+rand+"-1/")
+                .withJar("s3://hadoopassignment2/stepsJars/step1.jar")
+                .withMainClass("Step1")
+                .withArgs("s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/2gram/data")
                 .withArgs("s3://hadoopassignment2/output/"+rand+"-2/");
 
         StepConfig step2 = new StepConfig()
@@ -61,16 +62,53 @@ public class Main {
                 .withActionOnFailure("TERMINATE_JOB_FLOW")
                 .withHadoopJarStep(step2cfg);
 
+
+        //STEP 3 - N1
+        HadoopJarStepConfig step3cfg = new HadoopJarStepConfig()
+                .withJar("s3://hadoopassignment2/stepsJars/step1.jar")
+                .withMainClass("Step1")
+                .withArgs("s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/1gram/data")
+                .withArgs("s3://hadoopassignment2/output/"+rand+"-3/");
+        StepConfig step3 = new StepConfig()
+                .withName("Step 3")
+                .withActionOnFailure("TERMINATE_JOB_FLOW")
+                .withHadoopJarStep(step3cfg);
+
+
+        //STEP 4 - N3 N2
+        HadoopJarStepConfig step4cfg = new HadoopJarStepConfig()
+                .withJar("s3://hadoopassignment2/stepsJars/step4.jar")
+                .withMainClass("Step4")
+                .withArgs("s3://hadoopassignment2/output/"+rand+"-1/") //N3
+                .withArgs("s3://hadoopassignment2/output/"+rand+"-2/") //N2
+                .withArgs("s3://hadoopassignment2/output/"+rand+"-4/"); //output
+        StepConfig step4 = new StepConfig()
+                .withName("Step 4")
+                .withActionOnFailure("TERMINATE_JOB_FLOW")
+                .withHadoopJarStep(step4cfg);
+
+        //STEP 5 - N3 N2 N1
+        HadoopJarStepConfig step5cfg = new HadoopJarStepConfig()
+                .withJar("s3://hadoopassignment2/stepsJars/step5.jar")
+                .withMainClass("Step5")
+                .withArgs("s3://hadoopassignment2/output/"+rand+"-4/") //N3 N2
+                .withArgs("s3://hadoopassignment2/output/"+rand+"-3/") //N1
+                .withArgs("s3://hadoopassignment2/output/"+rand+"-5/"); //output
+        StepConfig step5 = new StepConfig()
+                .withName("Step 4")
+                .withActionOnFailure("TERMINATE_JOB_FLOW")
+                .withHadoopJarStep(step5cfg);
+
         RunJobFlowRequest request = new RunJobFlowRequest()
                 .withName("Distributed-Ass2")
                 .withReleaseLabel("emr-6.0.0-beta")
-                .withSteps(step1, step2)
+                .withSteps(step1, step2, step3, step4)
                 .withLogUri("s3://hadoopassignment2/logs/")
                 .withServiceRole("NE2")
                 .withJobFlowRole("NE")
                 .withInstances(new JobFlowInstancesConfig()
                         .withEc2KeyName("Admin")
-                        .withInstanceCount(3) // CLUSTER SIZE
+                        .withInstanceCount(5) // CLUSTER SIZE
                         .withKeepJobFlowAliveWhenNoSteps(false)
                         .withMasterInstanceType("m3.xlarge")
                         .withSlaveInstanceType("m3.xlarge"));

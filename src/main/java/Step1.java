@@ -45,12 +45,10 @@ public class Step1 {
         }
     }
 
-    //step2
     public static class PartitionerClass extends Partitioner<Text, IntWritable> {
         private Text _key = new Text();
         @Override
         public int getPartition(Text key, IntWritable value, int numPartitions) {
-//            String[] parts = key.toString().split(" ");
             _key.set(key);
             return (_key.hashCode() & Integer.MAX_VALUE) % numPartitions;
         }

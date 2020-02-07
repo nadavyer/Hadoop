@@ -12,7 +12,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-public class Step2 {
+public class Step2norgood {
     private static final String END_OF_KEYS = "\uFFFF";
     private static final String space = " ";
 
@@ -101,7 +101,7 @@ public class Step2 {
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "Step 2");
-        job.setJarByClass(Step2.class);
+        job.setJarByClass(Step2norgood.class);
         job.setMapperClass(MapperClass.class);
         job.setPartitionerClass(PartitionerClass.class);
         job.setReducerClass(ReducerClass.class);

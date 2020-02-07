@@ -57,7 +57,7 @@ public class Test {
     }
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
-        Job job = Job.getInstance(conf, " Step 1");
+        Job job = Job.getInstance(conf, "Step 1");
         job.setJarByClass(Step1.class);
         job.setMapperClass(MapperClass.class);
         job.setPartitionerClass(PartitionerClass.class);
