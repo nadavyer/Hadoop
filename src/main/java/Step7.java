@@ -13,7 +13,7 @@ import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-public class Step5 {
+public class Step7 {
     private static final String SPACE = " ";
     private static final String FIRST_Of_KEYS = "\u0000";
 
@@ -30,7 +30,7 @@ public class Step5 {
                 if (key_parts.length < 3) {
                     continue;
                 }
-                _key.set(key_parts[2]);// set w3 as key
+                _key.set(key_parts[2]);// set w2 as key
                 _val.set(parts[0] + "\t" + parts[1]); // set w1 w2 w3 val as new val
                 context.write(_key, _val);
             }
@@ -62,18 +62,18 @@ public class Step5 {
         protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
             Text _key = new Text();
             Text _val = new Text();
-            String N1 = "0";
-            String N3_N2 = "0";
+            String C1 = "0";
+            String N3_N2_N1_C2 = "0";
             for (Text value : values) {
                 String[] parts = value.toString().split("\t");
                 if (parts.length == 2) {
                     _key.set(parts[0]);
-                    N3_N2 = parts[1];
+                    N3_N2_N1_C2 = parts[1];
                 } else {
-                    N1 = value.toString().split(SPACE)[1];
+                    C1 = value.toString().split(SPACE)[1];
                 }
                 if (!_key.toString().equals("")) {
-                    _val.set(N3_N2 + SPACE + N1);
+                    _val.set(N3_N2_N1_C2 + SPACE + C1);
                     context.write(_key, _val);
                 }
             }
@@ -82,7 +82,7 @@ public class Step5 {
 
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
-        Job job = Job.getInstance(conf, "Step 5");
+        Job job = Job.getInstance(conf, "Step 7");
         job.setJarByClass(Step4.class);
         job.setReducerClass(ReduceJoinReducer.class);
 

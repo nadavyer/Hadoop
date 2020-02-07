@@ -95,20 +95,44 @@ public class Main {
                 .withArgs("s3://hadoopassignment2/output/"+rand+"-3/") //N1
                 .withArgs("s3://hadoopassignment2/output/"+rand+"-5/"); //output
         StepConfig step5 = new StepConfig()
-                .withName("Step 4")
+                .withName("Step 5")
                 .withActionOnFailure("TERMINATE_JOB_FLOW")
                 .withHadoopJarStep(step5cfg);
+
+        //STEP 6 - N3 N2 N1 C2
+        HadoopJarStepConfig step6cfg = new HadoopJarStepConfig()
+                .withJar("s3://hadoopassignment2/stepsJars/step6.jar")
+                .withMainClass("Step6")
+                .withArgs("s3://hadoopassignment2/output/"+rand+"-5/") //N3 N2 N1
+                .withArgs("s3://hadoopassignment2/output/"+rand+"-2/") //C2
+                .withArgs("s3://hadoopassignment2/output/"+rand+"-6/"); //output
+        StepConfig step6 = new StepConfig()
+                .withName("Step 6")
+                .withActionOnFailure("TERMINATE_JOB_FLOW")
+                .withHadoopJarStep(step6cfg);
+
+        //STEP 7 - N3 N2 N1 C2 C1
+        HadoopJarStepConfig step7cfg = new HadoopJarStepConfig()
+                .withJar("s3://hadoopassignment2/stepsJars/step7.jar")
+                .withMainClass("Step7")
+                .withArgs("s3://hadoopassignment2/output/"+rand+"-6/") //N3 N2 N1 C2
+                .withArgs("s3://hadoopassignment2/output/"+rand+"-3/") //C1
+                .withArgs("s3://hadoopassignment2/output/"+rand+"-7/"); //output
+        StepConfig step7 = new StepConfig()
+                .withName("Step 7")
+                .withActionOnFailure("TERMINATE_JOB_FLOW")
+                .withHadoopJarStep(step6cfg);
 
         RunJobFlowRequest request = new RunJobFlowRequest()
                 .withName("Distributed-Ass2")
                 .withReleaseLabel("emr-6.0.0-beta")
-                .withSteps(step1, step2, step3, step4)
+                .withSteps(step1, step2, step3, step4, step5, step6, step7)
                 .withLogUri("s3://hadoopassignment2/logs/")
                 .withServiceRole("NE2")
                 .withJobFlowRole("NE")
                 .withInstances(new JobFlowInstancesConfig()
                         .withEc2KeyName("Admin")
-                        .withInstanceCount(5) // CLUSTER SIZE
+                        .withInstanceCount(10) // CLUSTER SIZE
                         .withKeepJobFlowAliveWhenNoSteps(false)
                         .withMasterInstanceType("m3.xlarge")
                         .withSlaveInstanceType("m3.xlarge"));
