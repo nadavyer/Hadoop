@@ -44,8 +44,10 @@ public class Step10 {
                 int C1 = Integer.parseInt(valParts[4]);
                 long C0 = Long.parseLong(valParts[5]);
                 double probability = calcProb(N3, N2, N1, C2, C1, C0);
+                if (probability >= 0 && probability <= 1) {
+                    context.write(key, new DoubleWritable(probability));
+                }
 
-                context.write(key, new DoubleWritable(probability));
             }
         }
 
