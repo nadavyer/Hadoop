@@ -14,7 +14,6 @@ import com.amazonaws.services.elasticmapreduce.model.RunJobFlowResult;
 import com.amazonaws.services.elasticmapreduce.model.HadoopJarStepConfig;
 import com.amazonaws.services.elasticmapreduce.model.JobFlowInstancesConfig;
 import com.amazonaws.services.elasticmapreduce.model.StepConfig;
-import com.amazonaws.services.elasticmapreduce.util.BootstrapActions;
 
 public class Main {
 
@@ -121,12 +120,35 @@ public class Main {
         StepConfig step7 = new StepConfig()
                 .withName("Step 7")
                 .withActionOnFailure("TERMINATE_JOB_FLOW")
-                .withHadoopJarStep(step6cfg);
+                .withHadoopJarStep(step7cfg);
+
+        //STEP 8 - C0
+        HadoopJarStepConfig step8cfg = new HadoopJarStepConfig()
+                .withJar("s3://hadoopassignment2/stepsJars/step8.jar")
+                .withMainClass("Step8")
+                .withArgs("s3://hadoopassignment2/output/"+rand+"-3/") //N1
+                .withArgs("s3://hadoopassignment2/output/"+rand+"-8/"); //output
+        StepConfig step8 = new StepConfig()
+                .withName("Step 8")
+                .withActionOnFailure("TERMINATE_JOB_FLOW")
+                .withHadoopJarStep(step8cfg);
+
+        //STEP 9 - N3 N2 N1 C2 C1 C0
+        HadoopJarStepConfig step9cfg = new HadoopJarStepConfig()
+                .withJar("s3://hadoopassignment2/stepsJars/step9.jar")
+                .withMainClass("Step9")
+                .withArgs("s3://hadoopassignment2/output/"+rand+"-7/") //N3 N2 N1 C2 C1
+                .withArgs("s3://hadoopassignment2/output/"+rand+"-8/") //C0
+                .withArgs("s3://hadoopassignment2/output/"+rand+"-9/"); //output
+        StepConfig step9 = new StepConfig()
+                .withName("Step 9")
+                .withActionOnFailure("TERMINATE_JOB_FLOW")
+                .withHadoopJarStep(step9cfg);
 
         RunJobFlowRequest request = new RunJobFlowRequest()
                 .withName("Distributed-Ass2")
                 .withReleaseLabel("emr-6.0.0-beta")
-                .withSteps(step1, step2, step3, step4, step5, step6, step7)
+                .withSteps(step1, step2, step3, step4, step5, step6, step7, step8, step9)
                 .withLogUri("s3://hadoopassignment2/logs/")
                 .withServiceRole("NE2")
                 .withJobFlowRole("NE")

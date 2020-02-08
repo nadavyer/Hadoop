@@ -15,7 +15,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>Step7</mainClass>
+                            <mainClass>Step9</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
