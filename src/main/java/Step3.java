@@ -16,7 +16,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-public class Test {
+public class Step3 {
     public static class MapperClass extends Mapper<LongWritable, Text, Text, IntWritable> {
         private IntWritable _val = new IntWritable(0);
         private Text _key = new Text();
@@ -26,6 +26,10 @@ public class Test {
 
             while (itr.hasMoreTokens()) {
                 String[] parts = itr.nextToken().split("\t");
+                String[] words = parts[0]. split(" ");
+                if (words.length != 1) {
+                    continue;
+                }
                 _key.set(parts[0]);
                 _val.set(Integer.parseInt(parts[2]));
 
@@ -45,23 +49,20 @@ public class Test {
         }
     }
 
-    //step2
     public static class PartitionerClass extends Partitioner<Text, IntWritable> {
         private Text _key = new Text();
         @Override
         public int getPartition(Text key, IntWritable value, int numPartitions) {
-//            String[] parts = key.toString().split(" ");
             _key.set(key);
             return (_key.hashCode() & Integer.MAX_VALUE) % numPartitions;
         }
     }
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
-        Job job = Job.getInstance(conf, "Step 1");
-        job.setJarByClass(Step1.class);
+        Job job = Job.getInstance(conf, "Step 3");
+        job.setJarByClass(Step3.class);
         job.setMapperClass(MapperClass.class);
         job.setPartitionerClass(PartitionerClass.class);
-        job.setCombinerClass(ReducerClass.class);
         job.setReducerClass(ReducerClass.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(IntWritable.class);
@@ -69,7 +70,7 @@ public class Test {
         job.setOutputValueClass(IntWritable.class);
 
         FileInputFormat.addInputPath(job, new Path(args[1]));
-//        job.setInputFormatClass(SequenceFileInputFormat.class); //todo: change back when on  bigdata
+        job.setInputFormatClass(SequenceFileInputFormat.class);
         FileOutputFormat.setOutputPath(job, new Path(args[2]));
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }

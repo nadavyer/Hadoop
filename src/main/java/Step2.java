@@ -16,7 +16,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-public class Step1 {
+public class Step2 {
     public static class MapperClass extends Mapper<LongWritable, Text, Text, IntWritable> {
         private IntWritable _val = new IntWritable(0);
         private Text _key = new Text();
@@ -27,7 +27,7 @@ public class Step1 {
             while (itr.hasMoreTokens()) {
                 String[] parts = itr.nextToken().split("\t");
                 String[] words = parts[0]. split(" ");
-                if (words.length != 3) {
+                if (words.length != 2) {
                     continue;
                 }
                 _key.set(parts[0]);
@@ -59,8 +59,8 @@ public class Step1 {
     }
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
-        Job job = Job.getInstance(conf, "Step 1");
-        job.setJarByClass(Step1.class);
+        Job job = Job.getInstance(conf, "Step 2");
+        job.setJarByClass(Step2.class);
         job.setMapperClass(MapperClass.class);
         job.setPartitionerClass(PartitionerClass.class);
         job.setReducerClass(ReducerClass.class);

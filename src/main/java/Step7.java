@@ -83,7 +83,7 @@ public class Step7 {
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "Step 7");
-        job.setJarByClass(Step4.class);
+        job.setJarByClass(Step7.class);
         job.setReducerClass(ReduceJoinReducer.class);
 
         job.setOutputKeyClass(Text.class);
@@ -94,7 +94,6 @@ public class Step7 {
         FileOutputFormat.setOutputPath(job, new Path(args[3]));
         FileInputFormat.addInputPath(job, new Path(args[1]));
 
-//        job.setInputFormatClass(SequenceFileInputFormat.class);
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
 

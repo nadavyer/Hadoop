@@ -94,7 +94,6 @@ public class Step4 {
         FileOutputFormat.setOutputPath(job, new Path(args[3]));
         FileInputFormat.addInputPath(job, new Path(args[1]));
 
-//        job.setInputFormatClass(SequenceFileInputFormat.class);
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
 

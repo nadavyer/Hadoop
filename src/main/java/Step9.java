@@ -76,7 +76,7 @@ public class Step9 {
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "Step 9");
-        job.setJarByClass(Step4.class);
+        job.setJarByClass(Step9.class);
         job.setReducerClass(ReduceJoinReducer.class);
 
         job.setOutputKeyClass(Text.class);
