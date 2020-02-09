@@ -72,7 +72,7 @@ public class Step5 {
                 } else {
                     N1 = value.toString().split(SPACE)[1];
                 }
-                if (!_key.toString().equals("")) {
+                if (!_key.toString().equals("") && !N1.equals("0")) {
                     _val.set(N3_N2 + SPACE + N1);
                     context.write(_key, _val);
                 }

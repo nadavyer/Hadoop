@@ -65,7 +65,7 @@ public class Step9 {
                 } else {
                     C0 = value.toString().split(SPACE)[1];
                 }
-                if (!_key.toString().equals("")) {
+                if (!_key.toString().equals("") && !C0.equals("0")) {
                     _val.set(N3_N2_N1_C2_C1 + SPACE + C0);
                     context.write(_key, _val);
                 }

@@ -72,7 +72,7 @@ public class Step4 {
                 } else {
                     N2 = value.toString().split(SPACE)[1];
                 }
-                if (!_key.toString().equals("")) {
+                if (!_key.toString().equals("") && !N2.equals("0")) {
                     _val.set(N3 + SPACE + N2);
                     context.write(_key, _val);
                 }
