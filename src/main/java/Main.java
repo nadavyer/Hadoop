@@ -156,21 +156,36 @@ public class Main {
                 .withActionOnFailure("TERMINATE_JOB_FLOW")
                 .withHadoopJarStep(step10cfg);
 
+        //STEP 11 - sort
+        HadoopJarStepConfig step11cfg = new HadoopJarStepConfig()
+                .withJar("s3://hadoopassignment2/stepsJars/step11Last.jar")
+                .withMainClass("Step11Last")
+                .withArgs("s3://hadoopassignment2/output/"+rand+"-10/") //w1 w2 w3 probability
+                .withArgs("s3://hadoopassignment2/output/"+rand+"-11-final/"); //output
+        StepConfig step11Last = new StepConfig()
+                .withName("Step 11-Last")
+                .withActionOnFailure("TERMINATE_JOB_FLOW")
+                .withHadoopJarStep(step11cfg);
+
         RunJobFlowRequest request = new RunJobFlowRequest()
                 .withName("Distributed-Ass2")
                 .withReleaseLabel("emr-6.0.0-beta")
-                .withSteps(step1, step2, step3, step4, step5, step6, step7, step8, step9, step10)
+                .withSteps(step1, step2, step3, step4, step5, step6, step7, step8, step9, step10, step11Last)
                 .withLogUri("s3://hadoopassignment2/logs/")
                 .withServiceRole("NE2")
                 .withJobFlowRole("NE")
                 .withInstances(new JobFlowInstancesConfig()
                         .withEc2KeyName("Admin")
-                        .withInstanceCount(5) // CLUSTER SIZE
+                        .withInstanceCount(10) // CLUSTER SIZE
                         .withKeepJobFlowAliveWhenNoSteps(false)
                         .withMasterInstanceType("m3.xlarge")
                         .withSlaveInstanceType("m3.xlarge"));
 
         RunJobFlowResult result = emr.runJobFlow(request);
         System.out.println("JobFlow id: "+result.getJobFlowId());
+        System.out.println("*****************************************************************************************");
+        System.out.println("Your request is in progress. Your output can be found in: " +
+                "s3://hadoopassignment2/output/"+rand+"-11-final/" + " once it's finished");
+        System.out.println("*****************************************************************************************");
     }
 }
