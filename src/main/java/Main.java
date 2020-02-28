@@ -176,7 +176,7 @@ public class Main {
                 .withJobFlowRole("NE")
                 .withInstances(new JobFlowInstancesConfig()
                         .withEc2KeyName("Admin")
-                        .withInstanceCount(10) // CLUSTER SIZE
+                        .withInstanceCount(5) // CLUSTER SIZE
                         .withKeepJobFlowAliveWhenNoSteps(false)
                         .withMasterInstanceType("m3.xlarge")
                         .withSlaveInstanceType("m3.xlarge"));
