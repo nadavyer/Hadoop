@@ -1,5 +1,4 @@
-Nadav Yerushalmi - 204211056
-Elad Shabat - 305630014
+
 
 Output link on S3: https://s3.console.aws.amazon.com/s3/buckets/hadoopassignment2/output/eedf1939-804b-49d1-b2e0-772b7f12d693-11-final/?region=us-east-1&tab=overview
 
